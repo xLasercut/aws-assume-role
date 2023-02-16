@@ -16,7 +16,7 @@ function assume-role() {
 
   case $command in
   "help") __assume_role_help ;;
-  *) __assume_role "${@:2}" ;;
+  *) __assume_role "${@:1}" ;;
   esac
 }
 

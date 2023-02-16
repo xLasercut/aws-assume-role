@@ -9,6 +9,30 @@ This is a wrapper for aws cli to make assuming AWS roles much easier
 
 ## Installation
 
+### Install
+
+Bash
+```shell
+wget -qO- | SHELL_FILE="~/.bashrc" sh
+```
+
+Zsh
+```shell
+wget -qO- | SHELL_FILE="~/.zshrc" sh
+```
+
+### Uninstall
+
+Bash
+```shell
+wget -qO- | SHELL_FILE="~/.bashrc" sh
+```
+
+Zsh
+```shell
+wget -qO- | SHELL_FILE="~/.zshrc" sh
+```
+
 ## Credentials setup
 
 Update aws credentials file `~/.aws/credentials`
