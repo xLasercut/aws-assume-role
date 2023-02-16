@@ -13,24 +13,24 @@ This is a wrapper for aws cli to make assuming AWS roles much easier
 
 Bash
 ```shell
-wget -qO- | SHELL_FILE="~/.bashrc" sh
+wget -qO- https://raw.githubusercontent.com/xLasercut/aws-assume-role/master/install.sh | SHELL_FILE="$HOME/.bashrc" sh
 ```
 
 Zsh
 ```shell
-wget -qO- | SHELL_FILE="~/.zshrc" sh
+wget -qO- https://raw.githubusercontent.com/xLasercut/aws-assume-role/master/install.sh | SHELL_FILE="$HOME/.zshrc" sh
 ```
 
 ### Uninstall
 
 Bash
 ```shell
-wget -qO- | SHELL_FILE="~/.bashrc" sh
+wget -qO- https://github.com/xLasercut/aws-assume-role/blob/master/uninstall.sh | SHELL_FILE="$HOME/.bashrc" sh
 ```
 
 Zsh
 ```shell
-wget -qO- | SHELL_FILE="~/.zshrc" sh
+wget -qO- https://github.com/xLasercut/aws-assume-role/blob/master/uninstall.sh | SHELL_FILE="$HOME/.zshrc" sh
 ```
 
 ## Credentials setup
