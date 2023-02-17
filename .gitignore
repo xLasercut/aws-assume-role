@@ -1,2 +1,6 @@
 .idea
 .vscode
+
+# built binaries
+assume-role
+dist
