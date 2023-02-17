@@ -1,7 +1,7 @@
 install:
 	cd src && go mod tidy
 
-build: clean
+build:
 	cd src && go build -o ../dist/${BUILD_FILENAME} .
 
 clean:
