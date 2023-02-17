@@ -19,5 +19,11 @@ jobs:
       - name: Install Dependencies
         run: make install
 
-      - name: Build Packages
-        run: make build
+      - name: Build Linux
+        run: make build BUILD_FILENAME=assume-role-linux GOOS=linux GOARCH=amd64
+
+      - name: Build Darwin
+        run: make build BUILD_FILENAME=assume-role-darwin GOOS=darwin GOARCH=amd64
+
+      - name: Build Windows
+        run: make build BUILD_FILENAME=assume-role-windows.exe GOOS=windows GOARCH=amd64
