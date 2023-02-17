@@ -1,0 +1,29 @@
+name: CI
+
+on: pull_request
+
+jobs:
+  test-build:
+    name: Test Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.20.0'
+
+      - name: Install Dependencies
+        run: make install
+
+      - name: Build Linux
+        run: make build BUILD_FILENAME=assume-role-linux GOOS=linux GOARCH=amd64
+
+      - name: Build Darwin
+        run: make build BUILD_FILENAME=assume-role-darwin GOOS=darwin GOARCH=amd64
+
+      - name: Build Windows
+        run: make build BUILD_FILENAME=assume-role-windows.exe GOOS=windows GOARCH=amd64
