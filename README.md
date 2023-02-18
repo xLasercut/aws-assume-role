@@ -2,37 +2,6 @@
 
 This is a wrapper for aws cli to make assuming AWS roles much easier
 
-## Requirements
-
-- awscli
-- jq
-
-## Installation
-
-### Install
-
-Bash
-```shell
-wget -qO- https://raw.githubusercontent.com/xLasercut/aws-assume-role/master/install.sh | SHELL_FILE="$HOME/.bashrc" sh
-```
-
-Zsh
-```shell
-wget -qO- https://raw.githubusercontent.com/xLasercut/aws-assume-role/master/install.sh | SHELL_FILE="$HOME/.zshrc" sh
-```
-
-### Uninstall
-
-Bash
-```shell
-wget -qO- https://github.com/xLasercut/aws-assume-role/blob/master/uninstall.sh | SHELL_FILE="$HOME/.bashrc" sh
-```
-
-Zsh
-```shell
-wget -qO- https://github.com/xLasercut/aws-assume-role/blob/master/uninstall.sh | SHELL_FILE="$HOME/.zshrc" sh
-```
-
 ## Credentials setup
 
 Update aws credentials file `~/.aws/credentials`
@@ -73,4 +42,41 @@ source_profile = dev
 simply run the following command to assume the corresponding roles. If mfa_serial is configured, the script should ask for your MFA token.
 ```shell
 assume-role dev
+```
+
+If the role requires MFA, you will be asked for the token
+
+```shell
+$ assume-role dev
+Assuming Profile: dev
+RoleArn: arn:aws:iam::1234567890:role/developer
+SourceProfile: user
+Assume Role MFA token code: 123456
+Success!
+Expires: 2023-01-01 10:31:06 +0000 UTC
+```
+If no command is provided, `assume-role` will output the temporary security credentials:
+
+```shell
+$ assume-role dev
+export AWS_ACCESS_KEY_ID="AAAA....AAAA"
+export AWS_SECRET_ACCESS_KEY="BVS...a1Sfd"
+export AWS_SESSION_TOKEN="AQ...1SDF=="
+export AWS_SECURITY_TOKEN="AQ...1SDF=="
+export AWS_ASSUMED_ROLE="dev"
+export AWS_SESSION_EXPIRATION="2023-01-01T00:00:00Z"
+# Run this to configure your shell:
+# eval $(assume-role dev)
+```
+If you use `eval $(assume-role)` frequently, you may want to create a alias for it:
+
+zsh
+
+```shell
+alias assume-role='function(){eval $(command assume-role $@);}'
+```
+
+bash
+```shell
+function assume-role { eval $( $(which assume-role) $@); }
 ```
