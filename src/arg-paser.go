@@ -7,7 +7,6 @@ import (
 	"path"
 	"runtime"
 	"strings"
-	"time"
 )
 
 func usage() {
@@ -32,11 +31,11 @@ func defaultFormat() string {
 	}
 }
 
-func parseArgs() (string, time.Duration, string, string) {
+func parseArgs() (string, int, string, string) {
 	homeDir, _ := os.UserHomeDir()
 	defaultCredentialsFilepath := path.Join(homeDir, ".aws", "credentials")
 
-	duration := flag.Duration("duration", 3600, "The duration that the credentials will be valid for in seconds.")
+	duration := flag.Int("duration", 3600, "The duration that the credentials will be valid for in seconds.")
 	credentialsFilepath := flag.String("credentials-path", defaultCredentialsFilepath, "The absolute filepath to your aws credentials file.")
 	format := flag.String("format", defaultFormat(), "Format can be \"bash\", \"fish\" or \"powershell\".")
 

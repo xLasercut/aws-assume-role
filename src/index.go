@@ -54,13 +54,17 @@ func main() {
 	return
 }
 
-func assumeRole(cfg aws.Config, profile AwsProfile, baseProfileName string, duration time.Duration) *aws.CredentialsCache {
+func assumeRole(cfg aws.Config, profile AwsProfile, baseProfileName string, duration int) *aws.CredentialsCache {
 	stsClient := sts.NewFromConfig(cfg)
+
+	fmt.Fprintf(os.Stderr, "Assuming Profile: %s\n", profile.name)
+	fmt.Fprintf(os.Stderr, "RoleArn: %s\n", profile.roleArn)
+	fmt.Fprintf(os.Stderr, "SourceProfile: %s\n", profile.sourceProfile)
 
 	provider := stscreds.NewAssumeRoleProvider(stsClient, profile.roleArn, func(p *stscreds.AssumeRoleOptions) {
 		p.RoleSessionName = fmt.Sprintf("%v-%v", profile.name, baseProfileName)
 		p.TokenProvider = tokenProvider
-		p.Duration = duration * time.Second
+		p.Duration = time.Duration(duration) * time.Second
 
 		if profile.mfaSerial != "" {
 			p.SerialNumber = &profile.mfaSerial
@@ -72,7 +76,7 @@ func assumeRole(cfg aws.Config, profile AwsProfile, baseProfileName string, dura
 
 func tokenProvider() (string, error) {
 	var v string
-	fmt.Fprint(os.Stdin, "Assume Role MFA token code: ")
+	fmt.Fprint(os.Stderr, "Assume Role MFA token code: ")
 	_, err := fmt.Scanln(&v)
 
 	return v, err
@@ -81,6 +85,9 @@ func tokenProvider() (string, error) {
 func getCredentials(cfg aws.Config, ctx context.Context) aws.Credentials {
 	credentials, err := cfg.Credentials.Retrieve(ctx)
 	checkError(err, "Could not assume role")
+
+	fmt.Fprintf(os.Stderr, "Success!\n")
+	fmt.Fprintf(os.Stderr, "Expires: %v\n\n", credentials.Expires)
 
 	return credentials
 }
@@ -92,7 +99,8 @@ func printCredentials(role string, credentials aws.Credentials) {
 	fmt.Printf("export AWS_SECRET_ACCESS_KEY=\"%s\"\n", credentials.SecretAccessKey)
 	fmt.Printf("export AWS_SESSION_TOKEN=\"%s\"\n", credentials.SessionToken)
 	fmt.Printf("export AWS_SECURITY_TOKEN=\"%s\"\n", credentials.SessionToken)
-	fmt.Printf("export ASSUMED_ROLE=\"%s\"\n", role)
+	fmt.Printf("export AWS_ASSUMED_ROLE=\"%s\"\n", role)
+	fmt.Printf("export AWS_SESSION_EXPIRATION=\"%s\"\n", credentials.Expires.Format(time.RFC3339))
 	fmt.Printf("# Run this to configure your shell:\n")
 	fmt.Printf("# eval $(%s)\n", strings.Join(os.Args, " "))
 }
@@ -104,7 +112,8 @@ func printFishCredentials(role string, credentials aws.Credentials) {
 	fmt.Printf("set -gx AWS_SECRET_ACCESS_KEY \"%s\";\n", credentials.SecretAccessKey)
 	fmt.Printf("set -gx AWS_SESSION_TOKEN \"%s\";\n", credentials.SessionToken)
 	fmt.Printf("set -gx AWS_SECURITY_TOKEN \"%s\";\n", credentials.SessionToken)
-	fmt.Printf("set -gx ASSUMED_ROLE \"%s\";\n", role)
+	fmt.Printf("set -gx AWS_ASSUMED_ROLE \"%s\";\n", role)
+	fmt.Printf("set -gx AWS_SESSION_EXPIRATION \"%s\";\n", credentials.Expires.Format(time.RFC3339))
 	fmt.Printf("# Run this to configure your shell:\n")
 	fmt.Printf("# eval (%s)\n", strings.Join(os.Args, " "))
 }
@@ -116,7 +125,8 @@ func printPowerShellCredentials(role string, credentials aws.Credentials) {
 	fmt.Printf("$env:AWS_SECRET_ACCESS_KEY=\"%s\"\n", credentials.SecretAccessKey)
 	fmt.Printf("$env:AWS_SESSION_TOKEN=\"%s\"\n", credentials.SessionToken)
 	fmt.Printf("$env:AWS_SECURITY_TOKEN=\"%s\"\n", credentials.SessionToken)
-	fmt.Printf("$env:ASSUMED_ROLE=\"%s\"\n", role)
+	fmt.Printf("$env:AWS_ASSUMED_ROLE=\"%s\"\n", role)
+	fmt.Printf("$env:AWS_SESSION_EXPIRATION=\"%s\"\n", credentials.Expires.Format(time.RFC3339))
 	fmt.Printf("# Run this to configure your shell:\n")
 	fmt.Printf("# %s | Invoke-Expression \n", strings.Join(os.Args, " "))
 }
