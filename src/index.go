@@ -25,9 +25,9 @@ func init() {
 }
 
 func main() {
-	profileName, duration, credentialsFilepath, format := parseArgs()
+	profileName, duration, awsConfigFiles, format := parseArgs()
 
-	profileChain := getProfileChain(credentialsFilepath, profileName)
+	profileChain := getProfileChain(awsConfigFiles, profileName)
 
 	baseProfileName := profileChain[0].sourceProfile
 
