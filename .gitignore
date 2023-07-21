@@ -1,8 +1,6 @@
 .idea
 .vscode
 
-pkg
-
 # built binaries
 assume-role
 dist

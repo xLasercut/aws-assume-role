@@ -8,28 +8,22 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	. "github.com/xLasercut/aws-assume-role/internal"
 	"os"
 	"strings"
 	"time"
 )
 
-type AwsProfile struct {
-	name          string
-	roleArn       string
-	sourceProfile string
-	mfaSerial     string
-}
-
 func init() {
-	flag.Usage = usage
+	flag.Usage = Usage
 }
 
 func main() {
-	profileName, duration, awsConfigFiles, format := parseArgs()
+	profileName, duration, awsConfigFiles, format := ParseArgs()
 
-	profileChain := getProfileChain(awsConfigFiles, profileName)
+	profileChain := GetProfileChain(awsConfigFiles, profileName)
 
-	baseProfileName := profileChain[0].sourceProfile
+	baseProfileName := profileChain[0].SourceProfile
 
 	ctx := context.TODO()
 	cfg, _ := config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(baseProfileName))
@@ -57,17 +51,17 @@ func main() {
 func assumeRole(cfg aws.Config, profile AwsProfile, baseProfileName string, duration int) *aws.CredentialsCache {
 	stsClient := sts.NewFromConfig(cfg)
 
-	fmt.Fprintf(os.Stderr, "Assuming Profile: %s\n", profile.name)
-	fmt.Fprintf(os.Stderr, "RoleArn: %s\n", profile.roleArn)
-	fmt.Fprintf(os.Stderr, "SourceProfile: %s\n", profile.sourceProfile)
+	fmt.Fprintf(os.Stderr, "Assuming Profile: %s\n", profile.Name)
+	fmt.Fprintf(os.Stderr, "RoleArn: %s\n", profile.RoleArn)
+	fmt.Fprintf(os.Stderr, "SourceProfile: %s\n", profile.SourceProfile)
 
-	provider := stscreds.NewAssumeRoleProvider(stsClient, profile.roleArn, func(p *stscreds.AssumeRoleOptions) {
-		p.RoleSessionName = fmt.Sprintf("%v-%v", profile.name, baseProfileName)
+	provider := stscreds.NewAssumeRoleProvider(stsClient, profile.RoleArn, func(p *stscreds.AssumeRoleOptions) {
+		p.RoleSessionName = fmt.Sprintf("%v-%v", profile.Name, baseProfileName)
 		p.TokenProvider = tokenProvider
 		p.Duration = time.Duration(duration) * time.Second
 
-		if profile.mfaSerial != "" {
-			p.SerialNumber = &profile.mfaSerial
+		if profile.MfaSerial != "" {
+			p.SerialNumber = &profile.MfaSerial
 		}
 	})
 
@@ -84,7 +78,7 @@ func tokenProvider() (string, error) {
 
 func getCredentials(cfg aws.Config, ctx context.Context) aws.Credentials {
 	credentials, err := cfg.Credentials.Retrieve(ctx)
-	checkError(err, "Could not assume role")
+	CheckError(err, "Could not assume role")
 
 	fmt.Fprintf(os.Stderr, "Success!\n")
 	fmt.Fprintf(os.Stderr, "Expires: %v\n\n", credentials.Expires)
