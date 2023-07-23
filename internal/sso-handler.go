@@ -15,6 +15,7 @@ import (
 )
 
 func AssumeBaseRoleSso(profile AwsProfile) AwsCredentials {
+	StartAssumeRoleMessage(profile)
 	clientState := &SsoClientState{
 		AccessToken:             "",
 		ClientId:                "",
