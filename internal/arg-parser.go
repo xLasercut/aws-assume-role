@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"flag"
@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func usage() {
+func Usage() {
 	fmt.Fprintf(os.Stderr, "Usage: %s <role> [<command> <args...>]\n", os.Args[0])
 	flag.PrintDefaults()
 }
@@ -32,7 +32,7 @@ func defaultFormat() string {
 	}
 }
 
-func parseArgs() (string, int, *ini.File, string) {
+func ParseArgs() (string, int, *ini.File, string) {
 	homeDir, _ := os.UserHomeDir()
 	defaultCredentialsFilepath := path.Join(homeDir, ".aws", "credentials")
 	defaultConfigFilepath := path.Join(homeDir, ".aws", "config")
@@ -49,7 +49,7 @@ func parseArgs() (string, int, *ini.File, string) {
 	validateFormat(*format)
 
 	awsConfigFiles, err := ini.LooseLoad(*credentialsFilepath, *configFilepath)
-	checkError(err, "Could not load aws credentials or config file")
+	CheckError(err, "Could not load aws credentials or config file")
 
 	if *list {
 		fmt.Fprintf(os.Stderr, "Available AWS roles:\n")

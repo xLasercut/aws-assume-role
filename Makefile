@@ -1,8 +1,8 @@
 install:
-	cd src && go mod tidy
+	go mod tidy
 
 build:
-	cd src && go build -o ../dist/${BUILD_FILENAME} .
+	go build -o ./dist/${BUILD_FILENAME} ./cmd/aws-assume-role
 
 clean:
 	rm -rf dist
