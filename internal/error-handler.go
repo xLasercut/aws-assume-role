@@ -1,9 +1,9 @@
 package internal
 
 import (
-	"fmt"
-	"os"
-	"os/exec"
+    "fmt"
+    "os"
+    "os/exec"
 )
 
 func CheckError(err error, msg string) {

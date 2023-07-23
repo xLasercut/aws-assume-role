@@ -4,7 +4,7 @@ This is a wrapper for aws cli to make assuming AWS roles much easier
 
 ## Credentials setup
 
-Update aws credentials file `~/.aws/credentials`
+Update aws credentials file `~/.aws/credentials` and/or `~/.aws/config`
 ```text
 [user]
 region = eu-west-2
@@ -35,6 +35,26 @@ mfa_serial = arn:aws:iam::1234567890:mfa/user
 role_arn = arn:aws:iam::1234567890:role/developer-testing
 region = eu-west-2
 source_profile = dev
+```
+
+For SSO credentials and chaining
+```text
+[my-sso]
+sso_region = eu-west-2
+sso_start_url = https://abc.awsapps.com/start
+sso_registration_scopes = sso:account:access
+
+[admin]
+sso_session = my-sso
+sso_account_id = 1234567890
+sso_role_name = Admin
+region = eu-west-2
+
+[dev]
+role_arn = arn:aws:iam::1234567890:role/developer
+source_profile = admin
+region = eu-west-2
+
 ```
 
 ## Usage
