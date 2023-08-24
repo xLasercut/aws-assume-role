@@ -34,8 +34,7 @@ func GetProfileChain(awsConfigFiles *ini.File, profileName string) ([]AwsProfile
 	}
 
 	if len(fullProfileChain) < 2 {
-		err := errors.New("invalid assume profile config")
-		CheckError(err, "Could not load profile information")
+		return []AwsProfile{}, fullProfileChain[0]
 	}
 
 	profileChain := fullProfileChain[2:]

@@ -57,6 +57,24 @@ region = eu-west-2
 
 ```
 
+You can also config single roles likes this:
+```text
+[admin]
+sso_region = eu-west-2
+sso_start_url = https://abc.awsapps.com/start
+sso_registration_scopes = sso:account:access
+sso_account_id = 1234567890
+sso_role_name = Admin
+region = eu-west-2
+
+[dev]
+aws_access_key_id = ABCSDFAAWERA
+aws_secret_access_key = ASDFADFASDFASFWERQWER
+role_arn = arn:aws:iam::1234567890:role/developer
+region = eu-west-2
+mfa_serial = arn:aws:iam::1234567890:mfa/user
+```
+
 ## Usage
 
 simply run the following command to assume the corresponding roles. If mfa_serial is configured, the script should ask for your MFA token.
