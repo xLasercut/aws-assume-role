@@ -42,6 +42,10 @@ func GetProfileChain(awsConfigFiles *ini.File, profileName string) ([]AwsProfile
 		return []AwsProfile{}, fullProfileChain[0]
 	}
 
+	if fullProfileChain[0].RoleArn != "" || fullProfileChain[0].SsoRoleName != "" {
+		return fullProfileChain[1:], fullProfileChain[0]
+	}
+
 	profileChain := fullProfileChain[2:]
 	baseProfileChain := fullProfileChain[:2]
 	return profileChain, getBaseProfile(baseProfileChain)
