@@ -4,13 +4,47 @@ import (
 	"errors"
 	"fmt"
 	"gopkg.in/ini.v1"
+	"strings"
 )
+
+func removeAppendSections(profileSectionName string) string {
+	removedProfileAppend := strings.Replace(profileSectionName, "profile ", "", 1)
+	removedSsoSessionAppend := strings.Replace(removedProfileAppend, "sso-session ", "", 1)
+	return removedSsoSessionAppend
+}
+
+func getAllProfiles(awsConfigFiles *ini.File) []string {
+	allProfileSectionNames := awsConfigFiles.SectionStrings()
+
+	var allProfileNames []string
+
+	for _, profileSectionName := range allProfileSectionNames {
+		profileName := removeAppendSections(profileSectionName)
+		allProfileNames = append(allProfileNames, profileName)
+	}
+
+	return allProfileNames
+}
+
+func getProfileSectionName(awsConfigFiles *ini.File, profileName string) string {
+	allProfileSections := awsConfigFiles.SectionStrings()
+
+	for _, name := range allProfileSections {
+		if name == profileName || name == fmt.Sprintf("profile %s", profileName) || name == fmt.Sprintf("sso-session %s", profileName) {
+			return name
+		}
+	}
+
+	err := errors.New(fmt.Sprintf("profile \"%s\" does not exist", profileName))
+	CheckError(err, "Could not load profile information")
+	return ""
+}
 
 func GetProfileChain(awsConfigFiles *ini.File, profileName string) ([]AwsProfile, AwsProfile) {
 	var fullProfileChain []AwsProfile
 	profileNext := profileName
 
-	allProfileNames := awsConfigFiles.SectionStrings()
+	allProfileNames := getAllProfiles(awsConfigFiles)
 
 	for {
 		if !profileExists(allProfileNames, profileNext) {
@@ -52,7 +86,8 @@ func GetProfileChain(awsConfigFiles *ini.File, profileName string) ([]AwsProfile
 }
 
 func getAwsProfile(awsConfigFiles *ini.File, profileName string) AwsProfile {
-	credentialsFileSection := awsConfigFiles.Section(profileName)
+	sectionName := getProfileSectionName(awsConfigFiles, profileName)
+	credentialsFileSection := awsConfigFiles.Section(sectionName)
 	return AwsProfile{
 		Name:                  profileName,
 		RoleArn:               credentialsFileSection.Key("role_arn").String(),
