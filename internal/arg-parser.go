@@ -3,11 +3,12 @@ package internal
 import (
 	"flag"
 	"fmt"
-	"gopkg.in/ini.v1"
 	"os"
 	"path"
 	"runtime"
 	"strings"
+
+	"gopkg.in/ini.v1"
 )
 
 func Usage() {
@@ -32,7 +33,7 @@ func defaultFormat() string {
 	}
 }
 
-func ParseArgs() (string, int, *ini.File, string) {
+func ParseArgs(versionNumber string) (string, int, *ini.File, string) {
 	homeDir, _ := os.UserHomeDir()
 	defaultCredentialsFilepath := path.Join(homeDir, ".aws", "credentials")
 	defaultConfigFilepath := path.Join(homeDir, ".aws", "config")
@@ -42,6 +43,7 @@ func ParseArgs() (string, int, *ini.File, string) {
 	configFilepath := flag.String("config-path", defaultConfigFilepath, "The absolute filepath to your aws config file.")
 	format := flag.String("format", defaultFormat(), "Format can be \"bash\", \"fish\" or \"powershell\".")
 	list := flag.Bool("list", false, "Show list of available roles.")
+	version := flag.Bool("version", false, "Show version.")
 
 	flag.Parse()
 	argv := flag.Args()
@@ -50,6 +52,11 @@ func ParseArgs() (string, int, *ini.File, string) {
 
 	awsConfigFiles, err := ini.LooseLoad(*credentialsFilepath, *configFilepath)
 	CheckError(err, "Could not load aws credentials or config file")
+
+	if *version {
+		fmt.Fprintf(os.Stderr, "%s\n", versionNumber)
+		os.Exit(0)
+	}
 
 	if *list {
 		fmt.Fprintf(os.Stderr, "Available AWS roles:\n")

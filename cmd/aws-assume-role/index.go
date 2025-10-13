@@ -2,15 +2,18 @@ package main
 
 import (
 	"flag"
+
 	. "github.com/xLasercut/aws-assume-role/internal"
 )
+
+var AppVersion string = "dev"
 
 func init() {
 	flag.Usage = Usage
 }
 
 func main() {
-	profileName, duration, awsConfigFiles, format := ParseArgs()
+	profileName, duration, awsConfigFiles, format := ParseArgs(AppVersion)
 	profileChain, baseProfile := GetProfileChain(awsConfigFiles, profileName)
 
 	var awsCreds AwsCredentials
