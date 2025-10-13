@@ -56,6 +56,7 @@ func printCredentials(profileName string, creds AwsCredentials) {
 	fmt.Printf("export AWS_SECURITY_TOKEN=\"%s\"\n", creds.SessionToken)
 	fmt.Printf("export AWS_ASSUMED_ROLE=\"%s\"\n", profileName)
 	fmt.Printf("export AWS_SESSION_EXPIRATION=\"%s\"\n", formatExpiresAt(creds.ExpiresAt))
+	fmt.Printf("export AWS_PROFILE=\"%s\"\n", profileName)
 	fmt.Printf("# Run this to configure your shell:\n")
 	fmt.Printf("# eval $(%s)\n", strings.Join(os.Args, " "))
 }
@@ -69,6 +70,7 @@ func printFishCredentials(profileName string, creds AwsCredentials) {
 	fmt.Printf("set -gx AWS_SECURITY_TOKEN \"%s\";\n", creds.SessionToken)
 	fmt.Printf("set -gx AWS_ASSUMED_ROLE \"%s\";\n", profileName)
 	fmt.Printf("set -gx AWS_SESSION_EXPIRATION \"%s\";\n", formatExpiresAt(creds.ExpiresAt))
+	fmt.Printf("set -gx AWS_PROFILE \"%s\";\n", profileName)
 	fmt.Printf("# Run this to configure your shell:\n")
 	fmt.Printf("# eval (%s)\n", strings.Join(os.Args, " "))
 }
@@ -82,6 +84,7 @@ func printPowerShellCredentials(profileName string, creds AwsCredentials) {
 	fmt.Printf("$env:AWS_SECURITY_TOKEN=\"%s\"\n", creds.SessionToken)
 	fmt.Printf("$env:AWS_ASSUMED_ROLE=\"%s\"\n", profileName)
 	fmt.Printf("$env:AWS_SESSION_EXPIRATION=\"%s\"\n", formatExpiresAt(creds.ExpiresAt))
+	fmt.Printf("$env:AWS_PROFILE=\"%s\"\n", profileName)
 	fmt.Printf("# Run this to configure your shell:\n")
 	fmt.Printf("# %s | Invoke-Expression \n", strings.Join(os.Args, " "))
 }
